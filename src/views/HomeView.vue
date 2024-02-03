@@ -19,7 +19,8 @@
             <span class="reverse">${{ (remainingTips < 0 ? 0 : remainingTips ).toFixed(2) }}</span>
           </div>
           <div class="button-container">
-            <button :disabled="totalTips - remainingTips <= 0">
+            <button :disabled="totalTips - remainingTips <= 0"
+              @click="sendPostRequest">
               Pagar ${{ (totalTips - remainingTips).toFixed(2) }} en Propinas
             </button>
           </div>
@@ -37,11 +38,40 @@ import InputDevice from '@/components/InputDevice.vue';
 import Navbar from '@/components/Navbar.vue';
 import PaymentsList from '@/components/PaymentsList.vue';
 import { usePaymentsStore } from '@/stores/payments';
+import { useBehaviorsStore } from '@/stores/behaviors';
 
 const paymentStore = usePaymentsStore();
+const behaviorStore = useBehaviorsStore();
+
 const totalMoney = computed(() => paymentStore.totalMoney);
 const totalTips = computed(() => paymentStore.totalTips);
 const remainingTips = computed(() => paymentStore.getRemainingTips);
+const payments = computed(() => paymentStore.paymentList);
+
+const base_url = behaviorStore.base_url;
+
+async function sendPostRequest() {
+  if (!payments.value.length) return;
+
+  const response = await fetch(base_url + '/payment', {
+    method: 'POST',
+    headers: {
+      'Content-type': 'application/json'
+    },
+    body: JSON.stringify(payments.value),
+  });
+
+  const ok = response.ok;
+  if (!ok) {
+    const msg = response.statusText;
+    alert(msg);
+
+    return;
+  }
+
+  alert("Pagos realizados con éxito!");
+  paymentStore.resetValues();
+}
 
 </script>
 

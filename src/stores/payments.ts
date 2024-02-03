@@ -29,6 +29,15 @@ export const usePaymentsStore = defineStore('payments', {
   },
 
   actions: {
+    resetValues(): void {
+      const remaining = this.getRemainingTips;
+      this.totalTips = Math.max(0, remaining);
+      const people = this.paymentList.length;
+      this.paymentList = [];
+      this.peopleCount -= people;
+      this.setTipsFraction();
+    },
+
     addPayment(v: number): void {
       if (!this.currentPayMethod) {
         alert("Seleccione un método de pago.");
