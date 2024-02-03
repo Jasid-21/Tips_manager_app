@@ -6,7 +6,9 @@
         $
       </span>
       <span class="result">{{ charsArray.join('') }}</span>
-      <button class="delete" @click="deleteLast">Del</button>
+      <button class="delete-btn" @click="deleteLast">
+        <fai icon="fa-solid fa-delete-left"></fai>
+      </button>
     </div>
     <div class="buttons-container">
       <button v-for="n of Array.from(Array(9).keys())" @click="addChar(n)">
@@ -33,7 +35,7 @@ const pointerValue = computed(() => paymentsStore.pointer);
 const remainingTips = computed(() => paymentsStore.getRemainingTips);
 const paymentMethod = computed(() => paymentsStore.currentPayMethod);
 const tipsFraction = computed(() => paymentsStore.tipsFraction);
-const charsArray = ref<string[]>([]);
+const charsArray = ref<string[]>(['0']);
 
 function handleInitial() {
   if (!initial.value) return;
@@ -70,7 +72,7 @@ function setValue(): void {
 
   paymentsStore.setValue(Number(joined));
 
-  resetValue([]);
+  resetValue(['0']);
   initial.value = true;
   if (pointerValue.value == 'tips') {
     paymentsStore.setPointer('people');
@@ -116,6 +118,15 @@ function setValue(): void {
     span {
       font-size: 2rem;
       font-weight: 600;
+    }
+
+    .delete-btn {
+      background-color: transparent;
+      padding: 0;
+      width: min-content;
+      height: min-content;
+      border: none;
+      font-size: 1.4rem;
     }
   }
 

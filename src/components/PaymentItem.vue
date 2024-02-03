@@ -1,6 +1,9 @@
 <template>
   <li class="payment-item" :class="{ shadow, cancelable }">
-    <div class="symbol"></div>
+    <div class="symbol">
+      <fai icon="fa-solid fa-money-bill" v-if="item.method == 'Efectivo'"></fai>
+      <fai icon="fa-solid fa-credit-card" v-else></fai>
+    </div>
     <div class="method">{{ item.method }}</div>
     <div class="value">${{ item.value }}</div>
     <div class="date">{{ item.date }}</div>
@@ -46,6 +49,7 @@ li.payment-item {
   grid-template-columns: 50px auto 100px 100px;
 
   & > * {
+    justify-self: center;
     align-self: center;
   }
 
@@ -58,9 +62,27 @@ li.payment-item {
     box-shadow: 0 5px 10px rgb(170, 170, 170);
   }
 
+  .symbol {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .method {
+    justify-self: flex-start;
+  }
+
+  .value {
+    color: $accent;
+  }
+
   .date {
     font-size: 1rem;
     font-weight: 500;
+  }
+
+  .cancel {
+    cursor: pointer;
   }
 }
 </style>

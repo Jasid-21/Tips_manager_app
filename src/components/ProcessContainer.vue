@@ -4,7 +4,9 @@
       <span class="title">Total de Propinas</span>
       <div class="flex">
         <AmountContainer :amount="totalTips" :active="pointerValue == 'tips'" />
-        <button class="edit-btn" @click="setPointer('tips')">Ed</button>
+        <button class="edit-btn" @click="setPointer('tips')">
+          <fai icon="fa-solid fa-pen"></fai>
+        </button>
       </div>
     </div>
 
@@ -30,6 +32,9 @@
       <div class="buttons-container">
         <button class="method-selector" :class="{ active: paymentMethod == v }"
           v-for="v of methods" @click="setPayMethod(v)">
+          <fai class="icon" icon="fa-solid fa-money-bill" v-if="v == 'Efectivo'"></fai>
+          <fai class="icon" icon="fa-solid fa-credit-card" v-else></fai>
+          <br>
           {{ v.split('_').join(' ') }}
         </button>
       </div>
@@ -75,6 +80,21 @@ function setPayMethod(method: PaymentMethod): void {
     }
     .flex {
       display: flex;
+      column-gap: 0.5rem;
+
+      .edit-btn {
+        background-color: transparent;
+        border: 1px solid gray;
+        border-radius: 10px;
+        padding: 0.5rem;
+        font-size: 1.4rem;
+
+        &:hover {
+          cursor: pointer;
+          background-color: $secondary;
+          border-color: $primary;
+        }
+      }
     }
   }
 
@@ -140,6 +160,10 @@ function setPayMethod(method: PaymentMethod): void {
         border-radius: 10px;
         background-color: white;
         box-shadow: 1px 1px 10px var(--border-color);
+
+        .icon {
+          font-size: 1.4rem;
+        }
 
         &.active {
           border: 1px solid $primary;

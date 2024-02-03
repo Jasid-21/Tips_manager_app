@@ -10,7 +10,9 @@
       </ul>
 
       <div class="controls">
-        <button class="reload" @click="getPaymentsList">Re</button>
+        <button class="reload" @click="getPaymentsList">
+          <fai icon="fa-solid fa-arrow-rotate-left"></fai>
+        </button>
       </div>
     </div>
   </div>
@@ -71,8 +73,11 @@ async function getPaymentsList() {
       button {
         width: 100%;
         height: 50px;
+
         border-radius: 10px;
         border: 1px solid gray;
+        background-color: transparent;
+        font-size: 1.4rem;
         margin-bottom: 0.5rem;
       }
     }
