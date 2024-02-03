@@ -1,6 +1,5 @@
 <template>
   <div class="master-container">
-    <Navbar />
     <div class="navbar-space"></div>
     <div class="main-content">
       <div class="upper-info">
