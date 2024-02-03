@@ -14,7 +14,7 @@ nav {
   height: 100vh;
 
   background-color: $secondary;
-  position: absolute;
+  position: fixed;
   top: 0;
   left: calc($nav_width - 180px);
 

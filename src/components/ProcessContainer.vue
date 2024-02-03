@@ -3,8 +3,8 @@
     <div class="total-tips">
       <span class="title">Total de Propinas</span>
       <div class="flex">
-        <AmountContainer :amount="1828.00" />
-        <button class="edit-btn"></button>
+        <AmountContainer :amount="totalTips" :active="pointerValue == 'tips'" />
+        <button class="edit-btn" @click="setPointer('tips')">Ed</button>
       </div>
     </div>
 
@@ -14,8 +14,11 @@
       </span>
       <br><br>
       <div class="flex">
-        <input type="number" class="divider-input">
-        <span>$0,00 x Persona</span>
+        <div class="divider-input" :class="{ active: pointerValue == 'people'}"
+          @click="setPointer('people')">
+          {{ peopleCount }}
+        </div>
+        <span>${{ tipsFraction.toFixed(2) }} x Persona</span>
       </div>
     </div>
 
@@ -25,16 +28,37 @@
       </span>
 
       <div class="buttons-container">
-        <button class="method-selector">Efectivo</button>
-        <button class="method-selector">BBVA 1234</button>
-        <button class="method-selector">Santander 1234</button>
+        <button class="method-selector" :class="{ active: paymentMethod == v }"
+          v-for="v of methods" @click="setPayMethod(v)">
+          {{ v.split('_').join(' ') }}
+        </button>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue';
 import AmountContainer from './AmountContainer.vue';
+import { usePaymentsStore } from '@/stores/payments';
+import PointerValue from '@/Types/PointerValue.type';
+import PaymentMethod from '@/Types/PaymentMethod.type';
+
+const methods: PaymentMethod[] = ['Efectivo', 'BBVA_1234', 'Santander_1234'];
+const paymentsStore = usePaymentsStore();
+const totalTips = computed(() => paymentsStore.totalTips);
+const peopleCount = computed(() => paymentsStore.peopleCount);
+const tipsFraction = computed(() => paymentsStore.getTipsFraction);
+const pointerValue = computed(() => paymentsStore.pointer);
+const paymentMethod = computed(() => paymentsStore.currentPayMethod);
+
+function setPointer(value?: PointerValue): void {
+  paymentsStore.setPointer(value);
+}
+
+function setPayMethod(method: PaymentMethod): void {
+  paymentsStore.setPaymentMethod(method);
+}
 </script>
 
 <style scoped lang="scss">
@@ -68,20 +92,21 @@ import AmountContainer from './AmountContainer.vue';
       align-items: center;
       column-gap: 4rem;
 
-      input.divider-input {
+      .divider-input {
         width: 80px;
         height: 36px;
         border: 1px solid gray;
         border-radius: 10px;
+        font-size: 1rem;
+        text-align: center;
+        font-weight: 600;
 
-        appearance: none;
-        -moz-appearance: none;
-        margin: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
 
-        &::-webkit-inner-spin-button,
-        &::-webkit-outer-spin-button {
-          appearance: none;
-          -webkit-appearance: none;
+        &.active {
+          box-shadow: 0 0 2px 2px $primary;
         }
       }
 
@@ -110,10 +135,18 @@ import AmountContainer from './AmountContainer.vue';
         width: 100%;
         height: 80px;
 
+        font-weight: 600;
         border: 1px solid var(--border-color);
         border-radius: 10px;
         background-color: white;
         box-shadow: 1px 1px 10px var(--border-color);
+
+        &.active {
+          border: 1px solid $primary;
+          box-shadow: 0 0 2px 2px $primary;
+          background-color: $secondary;
+          color: $primary;
+        }
       }
     }
   }

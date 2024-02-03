@@ -1,13 +1,21 @@
 <template>
-  <div class="amount-container">
+  <div class="amount-container" :class="{ active }"
+    @click="emit('export-pointer', props.pointer)">
     <span>${{ amount.toFixed(2) }}</span>
   </div>
 </template>
 
 <script setup lang="ts">
+import PointerValue from '@/Types/PointerValue.type';
+import { PropType } from 'vue';
+
 const props = defineProps({
   amount: { type: Number, required: true },
-})
+  pointer: { type: String as PropType<PointerValue> },
+  active: { type: Boolean, default:  false },
+});
+
+const emit = defineEmits(['export-pointer']);
 </script>
 
 <style scoped lang="scss">
@@ -21,6 +29,10 @@ const props = defineProps({
   span {
     color: inherit;
     font-weight: 700;
+  }
+
+  &.active {
+    box-shadow: 0 0 2px 2px $primary;
   }
 }
 </style>
