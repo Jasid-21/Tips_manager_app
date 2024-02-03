@@ -5,7 +5,7 @@
     <div class="main-content">
       <div class="upper-info">
         <span class="view-title">Pago de Propinas</span>
-        <AmountContainer :amount="5500.00" />
+        <AmountContainer :amount="totalMoney" />
       </div>
       <section class="calc-section">
         <ProcessContainer />
@@ -16,7 +16,7 @@
             <span>Total Pagado</span>
             <span class="reverse">${{ (totalTips - remainingTips).toFixed(2) }}</span>
             <span>Restante por Pagar</span>
-            <span class="reverse">${{ remainingTips.toFixed(2) }}</span>
+            <span class="reverse">${{ (remainingTips < 0 ? 0 : remainingTips ).toFixed(2) }}</span>
           </div>
           <div class="button-container">
             <button :disabled="totalTips - remainingTips <= 0">
@@ -39,8 +39,9 @@ import PaymentsList from '@/components/PaymentsList.vue';
 import { usePaymentsStore } from '@/stores/payments';
 
 const paymentStore = usePaymentsStore();
+const totalMoney = computed(() => paymentStore.totalMoney);
 const totalTips = computed(() => paymentStore.totalTips);
-const remainingTips = computed(() => paymentStore.remainingTips);
+const remainingTips = computed(() => paymentStore.getRemainingTips);
 
 </script>
 

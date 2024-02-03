@@ -10,7 +10,7 @@
         <div class="symbol"></div>
         <div class="method">{{ p.method }}</div>
         <div class="value">${{ p.value }}</div>
-        <div class="cancel">x</div>
+        <div class="cancel" @click="removePayment(p.id)">x</div>
       </li>
     </ul>
   </div>
@@ -22,6 +22,14 @@ import { usePaymentsStore } from '@/stores/payments';
 
 const paymentStore = usePaymentsStore();
 const list = computed(() => paymentStore.paymentList);
+
+function removePayment(id: string): void {
+  if (!id) return;
+  const c = confirm('¿Seguro que deseas deshacer este pago?');
+  if (!c) return;
+  
+  paymentStore.removePayment(id);
+}
 </script>
 
 <style scoped lang="scss">

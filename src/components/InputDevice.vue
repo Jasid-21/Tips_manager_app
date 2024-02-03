@@ -18,7 +18,7 @@
     </div>
     <br>
     <div class="remaining-money-alert" v-if="paymentMethod">
-      Cantidad restante ${{ remainingTips.toFixed(2) }}
+      Cantidad restante ${{ (remainingTips < 0 ? 0 : remainingTips ).toFixed(2) }}
     </div>
   </div>
 </template>
@@ -26,21 +26,30 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { usePaymentsStore } from '@/stores/payments';
-import Payment from '@/interfaces/Payment.interface';
 
+const initial = ref<boolean>(true);
 const paymentsStore = usePaymentsStore();
 const pointerValue = computed(() => paymentsStore.pointer);
-const remainingTips = computed(() => paymentsStore.remainingTips);
+const remainingTips = computed(() => paymentsStore.getRemainingTips);
 const paymentMethod = computed(() => paymentsStore.currentPayMethod);
 const tipsFraction = computed(() => paymentsStore.tipsFraction);
 const charsArray = ref<string[]>([]);
 
+function handleInitial() {
+  if (!initial.value) return;
+
+  charsArray.value = [];
+  initial.value = false;
+}
+
 function addChar(char: number): void {
+  handleInitial();
   const c = (char + 1).toString();
   charsArray.value.push(c);
 }
 
 function addDoubleZero(): void {
+  handleInitial();
   charsArray.value.push(...['0', '0']);
 }
 
@@ -60,7 +69,9 @@ function setValue(): void {
   if (isNaN(num)) return;
 
   paymentsStore.setValue(Number(joined));
+
   resetValue([]);
+  initial.value = true;
   if (pointerValue.value == 'tips') {
     paymentsStore.setPointer('people');
     return;
@@ -74,8 +85,11 @@ function setValue(): void {
 
   if (pointerValue.value == 'final') {
     paymentsStore.addPayment(num);
-    if (remainingTips < tipsFraction) {
-      resetValue(remainingTips.value.toString().split(''));
+    if (remainingTips.value < tipsFraction.value) {
+      resetValue(
+        (remainingTips.value < 0 ? 0 : remainingTips.value)
+        .toString().split('')
+      );
       return;
     }
     resetValue();
